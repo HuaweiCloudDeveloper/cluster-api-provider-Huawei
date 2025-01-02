@@ -1,0 +1,16 @@
+[
+  {
+    "name": "huawei",
+    "config": {
+      "image": "gcr.io/k8s-staging-cluster-api-huawei/cluster-api-huawei-controller",
+      "live_reload_deps": [
+        "go.mod",
+        "go.sum",
+        "api",
+        "cmd",
+        "internal"
+      ],
+      "label": "CAPH"
+    }
+  }
+]
