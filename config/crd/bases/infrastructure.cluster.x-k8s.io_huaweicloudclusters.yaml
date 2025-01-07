@@ -40,23 +40,9 @@ spec:
           spec:
             description: HuaweiCloudClusterSpec defines the desired state of HuaweiCloudCluster.
             properties:
-              controlPlaneEndpoint:
-                description: ControlPlaneEndpoint represents the endpoint used to
-                  communicate with the control plane.
-                properties:
-                  host:
-                    description: The hostname on which the API server is serving.
-                    type: string
-                  port:
-                    description: The port on which the API server is serving.
-                    format: int32
-                    type: integer
-                required:
-                - host
-                - port
-                type: object
-              region:
-                description: The ECS Region the cluster lives in.
+              foo:
+                description: Foo is an example field of HuaweiCloudCluster. Edit huaweicloudcluster_types.go
+                  to remove/update
                 type: string
             type: object
           status:

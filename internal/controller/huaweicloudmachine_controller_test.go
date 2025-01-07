@@ -1,5 +1,5 @@
 /*
-Copyright 2024.
+Copyright 2025.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	infrastructurev1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-Huawei/api/v1alpha1"
+	infrastructurev1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1"
 )
 
 var _ = Describe("HuaweiCloudMachine Controller", func() {
@@ -51,13 +51,7 @@ var _ = Describe("HuaweiCloudMachine Controller", func() {
 						Name:      resourceName,
 						Namespace: "default",
 					},
-					Spec: infrastructurev1alpha1.HuaweiCloudMachineSpec{
-						// TODO(user): Specify other spec details if needed.
-						ProviderID: nil,
-						InstanceID: nil,
-						ImageRef:   nil,
-						FlavorRef:  "s2.small.1",
-					},
+					// TODO(user): Specify other spec details if needed.
 				}
 				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
 			}

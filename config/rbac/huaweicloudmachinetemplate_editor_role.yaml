@@ -1,0 +1,27 @@
+# permissions for end users to edit huaweicloudmachinetemplates.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: cluster-api-provider-huawei
+    app.kubernetes.io/managed-by: kustomize
+  name: huaweicloudmachinetemplate-editor-role
+rules:
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - huaweicloudmachinetemplates
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - huaweicloudmachinetemplates/status
+  verbs:
+  - get

@@ -23,17 +23,17 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// HuaweiCloudMachineSpec defines the desired state of HuaweiCloudMachine.
-type HuaweiCloudMachineSpec struct {
+// HuaweiCloudMachineTemplateSpec defines the desired state of HuaweiCloudMachineTemplate.
+type HuaweiCloudMachineTemplateSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of HuaweiCloudMachine. Edit huaweicloudmachine_types.go to remove/update
+	// Foo is an example field of HuaweiCloudMachineTemplate. Edit huaweicloudmachinetemplate_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
 }
 
-// HuaweiCloudMachineStatus defines the observed state of HuaweiCloudMachine.
-type HuaweiCloudMachineStatus struct {
+// HuaweiCloudMachineTemplateStatus defines the observed state of HuaweiCloudMachineTemplate.
+type HuaweiCloudMachineTemplateStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -41,24 +41,24 @@ type HuaweiCloudMachineStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 
-// HuaweiCloudMachine is the Schema for the huaweicloudmachines API.
-type HuaweiCloudMachine struct {
+// HuaweiCloudMachineTemplate is the Schema for the huaweicloudmachinetemplates API.
+type HuaweiCloudMachineTemplate struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   HuaweiCloudMachineSpec   `json:"spec,omitempty"`
-	Status HuaweiCloudMachineStatus `json:"status,omitempty"`
+	Spec   HuaweiCloudMachineTemplateSpec   `json:"spec,omitempty"`
+	Status HuaweiCloudMachineTemplateStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// HuaweiCloudMachineList contains a list of HuaweiCloudMachine.
-type HuaweiCloudMachineList struct {
+// HuaweiCloudMachineTemplateList contains a list of HuaweiCloudMachineTemplate.
+type HuaweiCloudMachineTemplateList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []HuaweiCloudMachine `json:"items"`
+	Items           []HuaweiCloudMachineTemplate `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&HuaweiCloudMachine{}, &HuaweiCloudMachineList{})
+	SchemeBuilder.Register(&HuaweiCloudMachineTemplate{}, &HuaweiCloudMachineTemplateList{})
 }

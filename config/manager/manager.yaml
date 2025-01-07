@@ -5,7 +5,8 @@ metadata:
     control-plane: controller-manager
     app.kubernetes.io/name: cluster-api-provider-huawei
     app.kubernetes.io/managed-by: kustomize
-  name: system
+    cluster.x-k8s.io/provider: infrastructure-huawei
+  name: caph-system
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -55,14 +56,14 @@ spec:
         # More info: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
         # Please uncomment the following code if your project does NOT have to work on old Kubernetes
         # versions < 1.19 or on vendors versions which do NOT support this field by default (i.e. Openshift < 4.11 ).
-        # seccompProfile:
-        #   type: RuntimeDefault
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - command:
         - /manager
         args:
-          - --leader-elect
-          - --health-probe-bind-address=:8081
+        - --leader-elect
+        - --health-probe-bind-address=:8081
         image: controller:latest
         name: manager
         securityContext:
@@ -70,6 +71,8 @@ spec:
           capabilities:
             drop:
             - "ALL"
+          runAsUser: 65532
+          runAsGroup: 65532
         livenessProbe:
           httpGet:
             path: /healthz

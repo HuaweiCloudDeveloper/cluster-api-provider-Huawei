@@ -22,8 +22,10 @@ resources:
 # default, aiding admins in cluster management. Those roles are
 # not used by the Project itself. You can comment the following lines
 # if you do not want those helpers be installed with your Project.
-- huaweicloudcluster_editor_role.yaml
-- huaweicloudcluster_viewer_role.yaml
+- huaweicloudmachinetemplate_editor_role.yaml
+- huaweicloudmachinetemplate_viewer_role.yaml
 - huaweicloudmachine_editor_role.yaml
 - huaweicloudmachine_viewer_role.yaml
+- huaweicloudcluster_editor_role.yaml
+- huaweicloudcluster_viewer_role.yaml
 

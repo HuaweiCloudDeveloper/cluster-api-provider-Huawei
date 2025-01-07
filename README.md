@@ -3,8 +3,8 @@
 Kubernetes-native declarative infrastructure for [Huawei Cloud](https://www.huaweicloud.com/).
 
 <!-- goreportcard badge -->
-<a href="https://goreportcard.com/report/HuaweiCloudDeveloper/cluster-api-provider-Huawei">
-<img src="https://goreportcard.com/badge/HuaweiCloudDeveloper/cluster-api-provider-Huawei"></a>
+<a href="https://goreportcard.com/report/HuaweiCloudDeveloper/cluster-api-provider-huawei">
+<img src="https://goreportcard.com/badge/HuaweiCloudDeveloper/cluster-api-provider-huawei"></a>
 
 ## What is the Cluster API Provider Huawei Cloud?
 

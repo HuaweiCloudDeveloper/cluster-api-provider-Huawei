@@ -6,7 +6,7 @@ domain: cluster.x-k8s.io
 layout:
 - go.kubebuilder.io/v4
 projectName: cluster-api-provider-huawei
-repo: github.com/HuaweiCloudDeveloper/cluster-api-provider-Huawei
+repo: github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei
 resources:
 - api:
     crdVersion: v1
@@ -14,8 +14,8 @@ resources:
   controller: true
   domain: cluster.x-k8s.io
   group: infrastructure
-  kind: HuaweiCloudMachine
-  path: github.com/HuaweiCloudDeveloper/cluster-api-provider-Huawei/api/v1alpha1
+  kind: HuaweiCloudCluster
+  path: github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -23,7 +23,15 @@ resources:
   controller: true
   domain: cluster.x-k8s.io
   group: infrastructure
-  kind: HuaweiCloudCluster
-  path: github.com/HuaweiCloudDeveloper/cluster-api-provider-Huawei/api/v1alpha1
+  kind: HuaweiCloudMachine
+  path: github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: cluster.x-k8s.io
+  group: infrastructure
+  kind: HuaweiCloudMachineTemplate
+  path: github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1
   version: v1alpha1
 version: "3"

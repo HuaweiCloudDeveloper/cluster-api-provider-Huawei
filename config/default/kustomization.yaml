@@ -1,12 +1,12 @@
 # Adds namespace to all resources.
-namespace: cluster-api-provider-huawei-system
+namespace: caph-system
 
 # Value of this field is prepended to the
 # names of all resources, e.g. a deployment named
 # "wordpress" becomes "alices-wordpress".
 # Note that it should also match with the prefix (text before '-') of the namespace
 # field above.
-namePrefix: cluster-api-provider-huawei-
+namePrefix: caph-
 
 # Labels to add to all resources and selectors.
 #labels:
@@ -175,3 +175,6 @@ patches:
 #         delimiter: '/'
 #         index: 1
 #         create: true
+patchesStrategicMerge:
+- manager_image_patch.yaml
+- manager_credentials_patch.yaml

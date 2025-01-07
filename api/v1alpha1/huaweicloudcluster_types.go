@@ -1,5 +1,5 @@
 /*
-Copyright 2024.
+Copyright 2025.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -29,15 +28,8 @@ type HuaweiCloudClusterSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// The ECS Region the cluster lives in.
-	Region string `json:"region,omitempty"`
-
-	// ControlPlaneEndpoint represents the endpoint used to communicate with the control plane.
-	// +optional
-	ControlPlaneEndpoint clusterv1.APIEndpoint `json:"controlPlaneEndpoint"`
-
-	// TODO, Network related fields need to be defined in the future
-	// other fields may like S3, SSHKey, etc.
+	// Foo is an example field of HuaweiCloudCluster. Edit huaweicloudcluster_types.go to remove/update
+	Foo string `json:"foo,omitempty"`
 }
 
 // HuaweiCloudClusterStatus defines the observed state of HuaweiCloudCluster.
@@ -68,5 +60,5 @@ type HuaweiCloudClusterList struct {
 }
 
 func init() {
-	objectTypes = append(objectTypes, &HuaweiCloudCluster{}, &HuaweiCloudClusterList{})
+	SchemeBuilder.Register(&HuaweiCloudCluster{}, &HuaweiCloudClusterList{})
 }

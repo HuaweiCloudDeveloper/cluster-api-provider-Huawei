@@ -1,5 +1,5 @@
 /*
-Copyright 2024.
+Copyright 2025.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -35,8 +35,9 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	infrastructurev1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-Huawei/api/v1alpha1"
-	"github.com/HuaweiCloudDeveloper/cluster-api-provider-Huawei/internal/controller"
+	infrastructurev1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1"
+	"github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/internal/controller"
+	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -124,7 +125,7 @@ func main() {
 		WebhookServer:          webhookServer,
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "57207ab2.cluster.x-k8s.io",
+		LeaderElectionID:       "3b0bc392.cluster.x-k8s.io",
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
 		// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
@@ -142,18 +143,39 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controller.HuaweiCloudMachineReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "HuaweiCloudMachine")
+	ak := os.Getenv("CLOUD_SDK_AK")
+	if ak == "" {
+		setupLog.Error(err, "missing required environment variable CLOUD_SDK_AK")
 		os.Exit(1)
 	}
+	sk := os.Getenv("CLOUD_SDK_SK")
+	if sk == "" {
+		setupLog.Error(err, "missing required environment variable CLOUD_SDK_SK")
+		os.Exit(1)
+	}
+	auth, err := basic.NewCredentialsBuilder().
+		WithAk(ak).
+		WithSk(sk).
+		SafeBuild()
+	if err != nil {
+		setupLog.Error(err, "failed to create credentials")
+		os.Exit(1)
+	}
+
 	if err = (&controller.HuaweiCloudClusterReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		Credentials: auth,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "HuaweiCloudCluster")
+		os.Exit(1)
+	}
+	if err = (&controller.HuaweiCloudMachineReconciler{
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		Credentials: auth,
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "HuaweiCloudMachine")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

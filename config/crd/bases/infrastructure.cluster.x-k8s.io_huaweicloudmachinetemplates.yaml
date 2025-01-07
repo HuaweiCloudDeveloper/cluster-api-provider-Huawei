@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.16.4
-  name: huaweicloudmachines.infrastructure.cluster.x-k8s.io
+  name: huaweicloudmachinetemplates.infrastructure.cluster.x-k8s.io
 spec:
   group: infrastructure.cluster.x-k8s.io
   names:
-    kind: HuaweiCloudMachine
-    listKind: HuaweiCloudMachineList
-    plural: huaweicloudmachines
-    singular: huaweicloudmachine
+    kind: HuaweiCloudMachineTemplate
+    listKind: HuaweiCloudMachineTemplateList
+    plural: huaweicloudmachinetemplates
+    singular: huaweicloudmachinetemplate
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: HuaweiCloudMachine is the Schema for the huaweicloudmachines
+        description: HuaweiCloudMachineTemplate is the Schema for the huaweicloudmachinetemplates
           API.
         properties:
           apiVersion:
@@ -38,15 +38,17 @@ spec:
           metadata:
             type: object
           spec:
-            description: HuaweiCloudMachineSpec defines the desired state of HuaweiCloudMachine.
+            description: HuaweiCloudMachineTemplateSpec defines the desired state
+              of HuaweiCloudMachineTemplate.
             properties:
               foo:
-                description: Foo is an example field of HuaweiCloudMachine. Edit huaweicloudmachine_types.go
-                  to remove/update
+                description: Foo is an example field of HuaweiCloudMachineTemplate.
+                  Edit huaweicloudmachinetemplate_types.go to remove/update
                 type: string
             type: object
           status:
-            description: HuaweiCloudMachineStatus defines the observed state of HuaweiCloudMachine.
+            description: HuaweiCloudMachineTemplateStatus defines the observed state
+              of HuaweiCloudMachineTemplate.
             type: object
         type: object
     served: true
