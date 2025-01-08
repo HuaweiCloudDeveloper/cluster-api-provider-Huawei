@@ -40,13 +40,58 @@ spec:
           spec:
             description: HuaweiCloudClusterSpec defines the desired state of HuaweiCloudCluster.
             properties:
-              foo:
-                description: Foo is an example field of HuaweiCloudCluster. Edit huaweicloudcluster_types.go
-                  to remove/update
+              controlPlaneEndpoint:
+                description: ControlPlaneEndpoint represents the endpoint used to
+                  communicate with the control plane.
+                properties:
+                  host:
+                    description: The hostname on which the API server is serving.
+                    type: string
+                  port:
+                    description: The port on which the API server is serving.
+                    format: int32
+                    type: integer
+                required:
+                - host
+                - port
+                type: object
+              network:
+                description: NetworkSpec encapsulates the configuration options for
+                  HuaweiCloud network.
+                properties:
+                  vpc:
+                    description: VPC configuration.
+                    properties:
+                      cidr:
+                        description: Cidr is the CIDR of the VPC.
+                        type: string
+                      id:
+                        description: Id is the unique identifier of the VPC. It is
+                          a UUID.
+                        type: string
+                      name:
+                        description: Name is the name of the VPC. It must be 0-64
+                          characters long and support numbers, letters, Chinese characters,
+                          _(underscore), -(hyphen), and .(dot).
+                        type: string
+                    required:
+                    - cidr
+                    - id
+                    - name
+                    type: object
+                type: object
+              region:
+                description: The ECS Region the cluster lives in.
                 type: string
             type: object
           status:
             description: HuaweiCloudClusterStatus defines the observed state of HuaweiCloudCluster.
+            properties:
+              ready:
+                default: false
+                type: boolean
+            required:
+            - ready
             type: object
         type: object
     served: true

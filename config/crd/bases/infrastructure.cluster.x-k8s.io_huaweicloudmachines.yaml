@@ -40,13 +40,61 @@ spec:
           spec:
             description: HuaweiCloudMachineSpec defines the desired state of HuaweiCloudMachine.
             properties:
-              foo:
-                description: Foo is an example field of HuaweiCloudMachine. Edit huaweicloudmachine_types.go
-                  to remove/update
+              flavorRef:
+                description: |-
+                  FlavorRef is similar to instanceType.
+                  FlavorRef is the type of instance to create. Example: s2.small.1
+                minLength: 2
                 type: string
+              imageRef:
+                description: |-
+                  镜像ID或者镜像资源的URL
+                  ImageRef is the reference from which to create the machine instance.
+                type: string
+              instanceID:
+                description: InstanceID is the ECS instance ID for this machine.
+                type: string
+              providerID:
+                description: |-
+                  弹性云服务器uuid。
+                  ProviderID is the unique identifier as specified by the cloud provider.
+                type: string
+            required:
+            - flavorRef
             type: object
           status:
             description: HuaweiCloudMachineStatus defines the observed state of HuaweiCloudMachine.
+            properties:
+              addresses:
+                description: Addresses contains the ECS instance associated addresses.
+                items:
+                  description: MachineAddress contains information for the node's
+                    address.
+                  properties:
+                    address:
+                      description: The machine address.
+                      type: string
+                    type:
+                      description: Machine address type, one of Hostname, ExternalIP,
+                        InternalIP, ExternalDNS or InternalDNS.
+                      type: string
+                  required:
+                  - address
+                  - type
+                  type: object
+                type: array
+              failureMessage:
+                type: string
+              instanceState:
+                description: InstanceState is the state of the ECS instance for this
+                  machine.
+                type: string
+              ready:
+                description: |-
+                  INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+                  Important: Run "make" to regenerate code after modifying this file
+                  Ready is true when the provider resource is ready.
+                type: boolean
             type: object
         type: object
     served: true

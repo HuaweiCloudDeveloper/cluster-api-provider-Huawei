@@ -17,6 +17,7 @@ limitations under the License.
 package e2e
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -59,6 +60,8 @@ var _ = Describe("Manager", Ordered, func() {
 		Expect(err).NotTo(HaveOccurred(), "Failed to install CRDs")
 
 		By("deploying the controller-manager")
+		_ = os.Setenv("CLOUD_SDK_AK", base64.StdEncoding.EncodeToString([]byte("ak_test")))
+		_ = os.Setenv("CLOUD_SDK_SK", base64.StdEncoding.EncodeToString([]byte("sk_test")))
 		cmd = exec.Command("make", "deploy", fmt.Sprintf("IMG=%s", projectImage))
 		_, err = utils.Run(cmd)
 		Expect(err).NotTo(HaveOccurred(), "Failed to deploy the controller-manager")

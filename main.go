@@ -25,19 +25,19 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	infrastructurev1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1"
+	"github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/internal/controller"
+	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/filters"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
-
-	infrastructurev1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1"
-	"github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/internal/controller"
-	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -50,6 +50,7 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(infrastructurev1alpha1.AddToScheme(scheme))
+	utilruntime.Must(clusterv1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -153,6 +154,8 @@ func main() {
 		setupLog.Error(err, "missing required environment variable CLOUD_SDK_SK")
 		os.Exit(1)
 	}
+	setupLog.Info("using credentials", "ak", ak)
+	setupLog.Info("using credentials", "sk", sk)
 	auth, err := basic.NewCredentialsBuilder().
 		WithAk(ak).
 		WithSk(sk).
