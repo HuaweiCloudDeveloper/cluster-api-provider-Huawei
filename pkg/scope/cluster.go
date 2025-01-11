@@ -26,6 +26,7 @@ import (
 
 	infrav1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1"
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
+	"sigs.k8s.io/cluster-api/util/conditions"
 	"sigs.k8s.io/cluster-api/util/patch"
 )
 
@@ -41,6 +42,7 @@ type ClusterScopeParams struct {
 // ClusterScope defines the basic context for an actuator to operate upon.
 type ClusterScope struct {
 	client      client.Client
+	patchHelper *patch.Helper
 	Logger      *logr.Logger
 	Cluster     *clusterv1.Cluster
 	HCCluster   *infrav1alpha1.HuaweiCloudCluster
@@ -69,21 +71,28 @@ func NewClusterScope(params ClusterScopeParams) (*ClusterScope, error) {
 		Credentials: params.Credentials,
 	}
 
+	helper, err := patch.NewHelper(params.HCCluster, params.Client)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to init patch helper")
+	}
+	clusterScope.patchHelper = helper
+
 	return clusterScope, nil
 }
 
 func (s *ClusterScope) Close() error {
-	// TODO: persist the cluster configuration and status.
-	return nil
+	// Always attempt to patch the HuaweiCloudCluster object to update conditions, status, etc.
+	return s.PatchObject()
 }
 
-func (s *ClusterScope) PatchObject() error {
-	helper, err := patch.NewHelper(s.HCCluster, s.client)
-	if err != nil {
-		return err
-	}
-	return helper.Patch(context.TODO(), s.HCCluster)
-	// return s.client.Patch(context.TODO(), s.Cluster, client.MergeFrom(s.Cluster.DeepCopy()))
+// CoreCluster returns the core cluster object.
+func (s *ClusterScope) CoreCluster() conditions.Setter {
+	return s.Cluster
+}
+
+// InfraCluster returns the huaweicloud cluster object.
+func (s *ClusterScope) InfraCluster() conditions.Setter {
+	return s.HCCluster
 }
 
 // VPC returns the cluster VPC.
@@ -94,4 +103,27 @@ func (s *ClusterScope) VPC() *infrav1alpha1.VPCSpec {
 // Region returns the cluster region.
 func (s *ClusterScope) Region() string {
 	return s.HCCluster.Spec.Region
+}
+
+// PatchObject persists the cluster configuration and status.
+func (s *ClusterScope) PatchObject() error {
+	applicableConditions := []clusterv1.ConditionType{
+		infrav1alpha1.VpcReadyCondition,
+		infrav1alpha1.SubnetsReadyCondition,
+	}
+
+	conditions.SetSummary(s.HCCluster,
+		conditions.WithConditions(applicableConditions...),
+		conditions.WithStepCounterIf(s.HCCluster.ObjectMeta.DeletionTimestamp.IsZero()),
+		conditions.WithStepCounter(),
+	)
+
+	return s.patchHelper.Patch(
+		context.TODO(),
+		s.HCCluster,
+		patch.WithOwnedConditions{Conditions: []clusterv1.ConditionType{
+			clusterv1.ReadyCondition,
+			infrav1alpha1.VpcReadyCondition,
+			infrav1alpha1.SubnetsReadyCondition,
+		}})
 }

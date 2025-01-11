@@ -48,6 +48,7 @@ kustomize_substitutions:
   HC_NODE_MACHINE_TYPE: "c6.xlarge.2"
 ```
 
+**Note:** Please ensure that the values for `CLOUD_SDK_AK` and `CLOUD_SDK_SK` are base64 encoded.
 
 ### Create a kind cluster and run Tilt!
 
@@ -56,7 +57,6 @@ To create a pre-configured kind cluster (if you have not already done so) and la
 ```bash
 make tilt-up
 ```
-
 
 ---
 

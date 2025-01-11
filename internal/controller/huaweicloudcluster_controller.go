@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"time"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -139,7 +140,7 @@ func (r *HuaweiCloudClusterReconciler) reconcileNormal(clusterScope *scope.Clust
 		return reconcile.Result{}, errors.Wrap(err, "failed to create network service")
 	}
 	if err := networkSvc.ReconcileNetwork(); err != nil {
-		return reconcile.Result{Requeue: true}, errors.Wrap(err, "failed to reconcile network")
+		return reconcile.Result{RequeueAfter: 30 * time.Second}, errors.Wrap(err, "failed to reconcile network")
 	}
 
 	// TODO: Reconcile security group

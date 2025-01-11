@@ -53,7 +53,8 @@ type HuaweiCloudClusterStatus struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// +kubebuilder:default=false
-	Ready bool `json:"ready"`
+	Ready      bool                 `json:"ready"`
+	Conditions clusterv1.Conditions `json:"conditions,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -75,6 +76,16 @@ type HuaweiCloudClusterList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []HuaweiCloudCluster `json:"items"`
+}
+
+// GetConditions returns the observations of the operational state of the AWSCluster resource.
+func (r *HuaweiCloudCluster) GetConditions() clusterv1.Conditions {
+	return r.Status.Conditions
+}
+
+// SetConditions sets the underlying service state of the AWSCluster to the predescribed clusterv1.Conditions.
+func (r *HuaweiCloudCluster) SetConditions(conditions clusterv1.Conditions) {
+	r.Status.Conditions = conditions
 }
 
 func init() {
