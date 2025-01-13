@@ -78,12 +78,12 @@ type HuaweiCloudClusterList struct {
 	Items           []HuaweiCloudCluster `json:"items"`
 }
 
-// GetConditions returns the observations of the operational state of the AWSCluster resource.
+// GetConditions returns the HuaweiCloudCluster's conditions.
 func (r *HuaweiCloudCluster) GetConditions() clusterv1.Conditions {
 	return r.Status.Conditions
 }
 
-// SetConditions sets the underlying service state of the AWSCluster to the predescribed clusterv1.Conditions.
+// SetConditions sets the underlying service state of the HuaweiCloudCluster to the predescribed clusterv1.Conditions.
 func (r *HuaweiCloudCluster) SetConditions(conditions clusterv1.Conditions) {
 	r.Status.Conditions = conditions
 }
