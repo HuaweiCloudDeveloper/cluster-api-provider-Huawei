@@ -34,3 +34,10 @@ const (
 	// SubnetsReconciliationFailedReason used to report failures while reconciling subnets.
 	SubnetsReconciliationFailedReason = "SubnetsReconciliationFailed"
 )
+
+const (
+	// ClusterSecurityGroupsReadyCondition reports successful reconciliation of security groups.
+	ClusterSecurityGroupsReadyCondition clusterv1.ConditionType = "ClusterSecurityGroupsReady"
+	// ClusterSecurityGroupReconciliationFailedReason used when any errors occur during reconciliation of security groups.
+	ClusterSecurityGroupReconciliationFailedReason = "SecurityGroupReconciliationFailed"
+)

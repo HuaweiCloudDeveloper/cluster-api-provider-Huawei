@@ -66,10 +66,6 @@ func (s *Service) reconcileVPC() error {
 		}
 	}
 
-	if err := s.scope.PatchObject(); err != nil {
-		return errors.Wrap(err, "failed to patch HuaweiCloudCluster with PVC details")
-	}
-
 	return nil
 }
 

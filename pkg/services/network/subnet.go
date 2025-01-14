@@ -42,6 +42,10 @@ func (s *Service) reconcileSubnets() error {
 }
 
 func (s *Service) deleteSubnets() error {
+	if s.scope.VPC().Id == "" {
+		klog.Infof("VPC ID is empty")
+		return nil
+	}
 	request := &model.ListSubnetsRequest{
 		VpcId: &s.scope.VPC().Id,
 	}

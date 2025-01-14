@@ -33,6 +33,7 @@ import (
 	infrav1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1"
 	"github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/pkg/scope"
 	"github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/pkg/services/network"
+	"github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/pkg/services/securitygroup"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"github.com/pkg/errors"
 )
@@ -134,7 +135,7 @@ func (r *HuaweiCloudClusterReconciler) reconcileNormal(clusterScope *scope.Clust
 		}
 	}
 
-	// Reconcile network
+	// reconcile network
 	networkSvc, err := network.NewService(clusterScope)
 	if err != nil {
 		return reconcile.Result{}, errors.Wrap(err, "failed to create network service")
@@ -143,7 +144,14 @@ func (r *HuaweiCloudClusterReconciler) reconcileNormal(clusterScope *scope.Clust
 		return reconcile.Result{RequeueAfter: 30 * time.Second}, errors.Wrap(err, "failed to reconcile network")
 	}
 
-	// TODO: Reconcile security group
+	// reconcile security group
+	sgSvc, err := securitygroup.NewService(clusterScope)
+	if err != nil {
+		return reconcile.Result{}, errors.Wrap(err, "failed to create security group service")
+	}
+	if err := sgSvc.ReconcileSecurityGroups(); err != nil {
+		return reconcile.Result{RequeueAfter: 30 * time.Second}, errors.Wrap(err, "failed to reconcile security groups")
+	}
 
 	hccluster.Status.Ready = true
 	return reconcile.Result{}, nil
@@ -158,7 +166,16 @@ func (r *HuaweiCloudClusterReconciler) reconcileDelete(clusterScope *scope.Clust
 
 	clusterScope.Logger.Info("Deleting HuaweiCloudCluster")
 
-	// Delete network
+	// delete security group
+	sgSvc, err := securitygroup.NewService(clusterScope)
+	if err != nil {
+		return errors.Wrap(err, "failed to create security group service")
+	}
+	if err := sgSvc.DeleteSecurityGroups(); err != nil {
+		return errors.Wrap(err, "failed to delete security groups")
+	}
+
+	// delete network
 	networkSvc, err := network.NewService(clusterScope)
 	if err != nil {
 		return errors.Wrap(err, "failed to create network service")
@@ -166,8 +183,6 @@ func (r *HuaweiCloudClusterReconciler) reconcileDelete(clusterScope *scope.Clust
 	if err := networkSvc.DeleteNetwork(); err != nil {
 		return errors.Wrap(err, "failed to delete network")
 	}
-
-	// TODO: Delete security group
 
 	controllerutil.RemoveFinalizer(clusterScope.HCCluster, infrav1alpha1.ClusterFinalizer)
 	return nil
