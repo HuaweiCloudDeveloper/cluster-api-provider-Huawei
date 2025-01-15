@@ -41,3 +41,10 @@ const (
 	// ClusterSecurityGroupReconciliationFailedReason used when any errors occur during reconciliation of security groups.
 	ClusterSecurityGroupReconciliationFailedReason = "SecurityGroupReconciliationFailed"
 )
+
+const (
+	// LoadBalancerReadyCondition reports on whether a control plane load balancer was successfully reconciled.
+	LoadBalancerReadyCondition clusterv1.ConditionType = "LoadBalancerReady"
+	// LoadBalancerFailedReason used when an error occurs during load balancer reconciliation.
+	LoadBalancerFailedReason = "LoadBalancerFailed"
+)

@@ -85,6 +85,11 @@ func (s *ClusterScope) Close() error {
 	return s.PatchObject()
 }
 
+// Name returns the CAPI Cluster name.
+func (s *ClusterScope) ClusterName() string {
+	return s.Cluster.Name
+}
+
 // CoreCluster returns the core cluster object.
 func (s *ClusterScope) CoreCluster() conditions.Setter {
 	return s.Cluster
@@ -98,6 +103,16 @@ func (s *ClusterScope) InfraCluster() conditions.Setter {
 // VPC returns the cluster VPC.
 func (s *ClusterScope) VPC() *infrav1alpha1.VPCSpec {
 	return &s.HCCluster.Spec.NetworkSpec.VPC
+}
+
+// Subnets returns the cluster subnets.
+func (s *ClusterScope) Subnets() infrav1alpha1.Subnets {
+	return s.HCCluster.Spec.NetworkSpec.Subnets
+}
+
+// SetSubnets updates the clusters subnets.
+func (s *ClusterScope) SetSubnets(subnets infrav1alpha1.Subnets) {
+	s.HCCluster.Spec.NetworkSpec.Subnets = subnets
 }
 
 // Region returns the cluster region.

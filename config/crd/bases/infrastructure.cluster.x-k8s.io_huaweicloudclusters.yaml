@@ -59,6 +59,51 @@ spec:
                 description: NetworkSpec encapsulates the configuration options for
                   HuaweiCloud network.
                 properties:
+                  subnets:
+                    description: Subnets configuration.
+                    items:
+                      description: Subnet
+                      properties:
+                        cidr:
+                          description: CIDR is the CIDR of the subnet. It must be
+                            in CIDR format. The mask length cannot be greater than
+                            28.
+                          type: string
+                        gateway_ip:
+                          description: GatewayIp is the gateway of the subnet. It
+                            must be an IP address in the subnet segment.
+                          type: string
+                        id:
+                          description: ID defines a unique identifier to reference
+                            this resource.
+                          type: string
+                        name:
+                          description: Name is the name of the subnet. It must be
+                            1-64 characters long and support numbers, letters, Chinese
+                            characters, _(underscore), -(hyphen), and .(dot).
+                          type: string
+                        neutron_network_id:
+                          description: NeutronNetworkId is the identifier of the network
+                            (OpenStack Neutron interface).
+                          type: string
+                        neutron_subnet_id:
+                          description: NeutronSubnetId is the identifier of the subnet
+                            (OpenStack Neutron interface).
+                          type: string
+                        vpc_id:
+                          description: VPCId is the identifier of the VPC where the
+                            subnet is located.
+                          type: string
+                      required:
+                      - cidr
+                      - gateway_ip
+                      - id
+                      - name
+                      - neutron_network_id
+                      - neutron_subnet_id
+                      - vpc_id
+                      type: object
+                    type: array
                   vpc:
                     description: VPC configuration.
                     properties:

@@ -21,6 +21,10 @@ type NetworkSpec struct {
 	// VPC configuration.
 	// +optional
 	VPC VPCSpec `json:"vpc,omitempty"`
+
+	// Subnets configuration.
+	// +optional
+	Subnets Subnets `json:"subnets,omitempty"`
 }
 
 type VPCSpec struct {
@@ -32,4 +36,30 @@ type VPCSpec struct {
 
 	// Cidr is the CIDR of the VPC.
 	Cidr string `json:"cidr"`
+}
+
+type Subnets []SubnetSpec
+
+// Subnet
+type SubnetSpec struct {
+	// ID defines a unique identifier to reference this resource.
+	Id string `json:"id"`
+
+	// Name is the name of the subnet. It must be 1-64 characters long and support numbers, letters, Chinese characters, _(underscore), -(hyphen), and .(dot).
+	Name string `json:"name"`
+
+	// CIDR is the CIDR of the subnet. It must be in CIDR format. The mask length cannot be greater than 28.
+	Cidr string `json:"cidr"`
+
+	// GatewayIp is the gateway of the subnet. It must be an IP address in the subnet segment.
+	GatewayIp string `json:"gateway_ip"`
+
+	// VPCId is the identifier of the VPC where the subnet is located.
+	VpcId string `json:"vpc_id"`
+
+	// NeutronNetworkId is the identifier of the network (OpenStack Neutron interface).
+	NeutronNetworkId string `json:"neutron_network_id"`
+
+	// NeutronSubnetId is the identifier of the subnet (OpenStack Neutron interface).
+	NeutronSubnetId string `json:"neutron_subnet_id"`
 }

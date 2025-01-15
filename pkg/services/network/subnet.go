@@ -1,6 +1,9 @@
 package network
 
 import (
+	"strings"
+
+	infrav1alpha1 "github.com/HuaweiCloudDeveloper/cluster-api-provider-huawei/api/v1alpha1"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v2/model"
 	"github.com/pkg/errors"
 	"k8s.io/klog/v2"
@@ -10,6 +13,7 @@ func (s *Service) reconcileSubnets() error {
 	if s.scope.VPC().Id == "" {
 		return errors.New("VPC ID is empty")
 	}
+
 	// Check if subnet exists, if not create it
 	request := &model.ListSubnetsRequest{}
 	response, err := s.vpcClient.ListSubnets(request)
@@ -32,10 +36,28 @@ func (s *Service) reconcileSubnets() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to create subnet")
 		}
+
+		s.scope.SetSubnets([]infrav1alpha1.SubnetSpec{
+			{
+				Id:               response.Subnet.Id,
+				Name:             response.Subnet.Name,
+				Cidr:             response.Subnet.Cidr,
+				GatewayIp:        response.Subnet.GatewayIp,
+				VpcId:            response.Subnet.VpcId,
+				NeutronNetworkId: response.Subnet.NeutronNetworkId,
+				NeutronSubnetId:  response.Subnet.NeutronSubnetId,
+			},
+		})
 		klog.Infof("Subnet create response: %v", response)
 		klog.Infof("Created subnet")
 	} else {
 		klog.Infof("Subnet already exists")
+	}
+
+	// Persist the new default subnets to HCCluster
+	if err := s.scope.PatchObject(); err != nil {
+		klog.Errorf("Failed to patch HCCluster: %v", err)
+		return err
 	}
 
 	return nil
@@ -51,6 +73,10 @@ func (s *Service) deleteSubnets() error {
 	}
 	response, err := s.vpcClient.ListSubnets(request)
 	if err != nil {
+		if strings.Contains(err.Error(), "VPC.0202") {
+			klog.Infof("VPC not found")
+			return nil
+		}
 		return errors.Wrap(err, "failed to list subnets")
 	}
 
