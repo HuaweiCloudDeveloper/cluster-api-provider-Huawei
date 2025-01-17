@@ -70,6 +70,7 @@ func (s *Service) ReconcileSecurityGroups() error {
 		},
 	}
 
+	securityGroupRules := []infrav1alpha1.SecurityGroupRule{}
 	// Check and create ingress rules
 	for _, rule := range ingressRules {
 		if !s.securityGroupRuleExists(securityGroupID, rule) {
@@ -78,17 +79,46 @@ func (s *Service) ReconcileSecurityGroups() error {
 					SecurityGroupRule: &rule,
 				},
 			}
-			_, err := s.vpcClient.NeutronCreateSecurityGroupRule(createSecurityGroupRuleRequest)
+			ruleRep, err := s.vpcClient.NeutronCreateSecurityGroupRule(createSecurityGroupRuleRequest)
 			if err != nil {
 				return fmt.Errorf("failed to create security group rule: %v", err)
 			}
+
+			securityGroupRules = append(securityGroupRules, infrav1alpha1.SecurityGroupRule{
+				Id:             ruleRep.SecurityGroupRule.Id,
+				Direction:      ruleRep.SecurityGroupRule.Direction.Value(),
+				Ethertype:      ruleRep.SecurityGroupRule.Ethertype,
+				PortRangeMin:   ruleRep.SecurityGroupRule.PortRangeMin,
+				PortRangeMax:   ruleRep.SecurityGroupRule.PortRangeMax,
+				Protocol:       ruleRep.SecurityGroupRule.Protocol,
+				RemoteIpPrefix: ruleRep.SecurityGroupRule.RemoteIpPrefix,
+			})
 			klog.Infof("Created security group rule: %+v", rule)
 		} else {
 			klog.Infof("Security group rule already exists: %+v", rule)
 		}
 	}
 
+	securityGroups := s.scope.SecurityGroups()
+	if securityGroups == nil {
+		securityGroups = make(map[infrav1alpha1.SecurityGroupRole]infrav1alpha1.SecurityGroup)
+		s.scope.SetSecurityGroups(securityGroups)
+	}
+
+	for _, role := range s.roles {
+		securityGroups[role] = infrav1alpha1.SecurityGroup{
+			ID:                 securityGroupID,
+			Name:               securityGroupName,
+			SecurityGroupRules: securityGroupRules,
+		}
+	}
+
+	s.scope.SetSecurityGroups(securityGroups)
+
 	conditions.MarkTrue(s.scope.InfraCluster(), infrav1alpha1.ClusterSecurityGroupsReadyCondition)
+	if err := s.scope.PatchObject(); err != nil {
+		return fmt.Errorf("failed to patch HCCluster: %v", err)
+	}
 	return nil
 }
 

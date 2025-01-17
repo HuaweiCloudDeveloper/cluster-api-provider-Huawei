@@ -39,11 +39,26 @@ import (
 	"github.com/pkg/errors"
 )
 
+var defaultHCSecurityGroupRoles = []infrav1alpha1.SecurityGroupRole{
+	infrav1alpha1.SecurityGroupAPIServerLB,
+	infrav1alpha1.SecurityGroupLB,
+	infrav1alpha1.SecurityGroupControlPlane,
+	infrav1alpha1.SecurityGroupNode,
+}
+
 // HuaweiCloudClusterReconciler reconciles a HuaweiCloudCluster object
 type HuaweiCloudClusterReconciler struct {
 	client.Client
 	Scheme      *runtime.Scheme
 	Credentials *basic.Credentials
+}
+
+// securityGroupRolesForCluster returns the security group roles determined by the cluster configuration.
+func securityGroupRolesForCluster() []infrav1alpha1.SecurityGroupRole {
+	// Copy to ensure we do not modify the package-level variable.
+	roles := make([]infrav1alpha1.SecurityGroupRole, len(defaultHCSecurityGroupRoles))
+	copy(roles, defaultHCSecurityGroupRoles)
+	return roles
 }
 
 // +kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=huaweicloudclusters,verbs=get;list;watch;create;update;patch;delete
@@ -146,7 +161,7 @@ func (r *HuaweiCloudClusterReconciler) reconcileNormal(clusterScope *scope.Clust
 	}
 
 	// reconcile security group
-	sgSvc, err := securitygroup.NewService(clusterScope)
+	sgSvc, err := securitygroup.NewService(clusterScope, securityGroupRolesForCluster())
 	if err != nil {
 		return reconcile.Result{}, errors.Wrap(err, "failed to create security group service")
 	}
@@ -186,7 +201,7 @@ func (r *HuaweiCloudClusterReconciler) reconcileDelete(clusterScope *scope.Clust
 	}
 
 	// delete security group
-	sgSvc, err := securitygroup.NewService(clusterScope)
+	sgSvc, err := securitygroup.NewService(clusterScope, securityGroupRolesForCluster())
 	if err != nil {
 		return errors.Wrap(err, "failed to create security group service")
 	}

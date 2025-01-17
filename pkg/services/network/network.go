@@ -32,8 +32,6 @@ func (s *Service) ReconcileNetwork() error {
 		return err
 	}
 
-	// TODO: Public IPs
-
 	// TODO: Routing tables
 
 	klog.Infof("Reconcile network completed successfully")
@@ -66,8 +64,6 @@ func (s *Service) DeleteNetwork() error {
 		infrav1alpha1.SubnetsReadyCondition,
 		clusterv1.DeletedReason,
 		clusterv1.ConditionSeverityInfo, "")
-
-	// TODO: Delete Public IPs
 
 	// TODO: Delete Route Tables
 

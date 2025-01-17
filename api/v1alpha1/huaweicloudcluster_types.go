@@ -54,6 +54,7 @@ type HuaweiCloudClusterStatus struct {
 
 	// +kubebuilder:default=false
 	Ready      bool                 `json:"ready"`
+	Network    NetworkStatus        `json:"networkStatus,omitempty"`
 	Conditions clusterv1.Conditions `json:"conditions,omitempty"`
 }
 

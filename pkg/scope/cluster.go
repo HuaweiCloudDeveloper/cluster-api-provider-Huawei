@@ -120,6 +120,16 @@ func (s *ClusterScope) Region() string {
 	return s.HCCluster.Spec.Region
 }
 
+// SecurityGroups returns the cluster security groups as a map, it creates the map if empty.
+func (s *ClusterScope) SecurityGroups() map[infrav1alpha1.SecurityGroupRole]infrav1alpha1.SecurityGroup {
+	return s.HCCluster.Status.Network.SecurityGroups
+}
+
+// SetSecurityGroups updates the cluster security groups.
+func (s *ClusterScope) SetSecurityGroups(sg map[infrav1alpha1.SecurityGroupRole]infrav1alpha1.SecurityGroup) {
+	s.HCCluster.Status.Network.SecurityGroups = sg
+}
+
 // PatchObject persists the cluster configuration and status.
 func (s *ClusterScope) PatchObject() error {
 	applicableConditions := []clusterv1.ConditionType{

@@ -16,6 +16,8 @@ limitations under the License.
 
 package v1alpha1
 
+import "fmt"
+
 // NetworkSpect encapsulates the configuration options for HuaweiCloud network.
 type NetworkSpec struct {
 	// VPC configuration.
@@ -62,4 +64,82 @@ type SubnetSpec struct {
 
 	// NeutronSubnetId is the identifier of the subnet (OpenStack Neutron interface).
 	NeutronSubnetId string `json:"neutron_subnet_id"`
+}
+
+// SecurityGroupRole defines the unique role of a security group.
+// +kubebuilder:validation:Enum=bastion;node;controlplane;apiserver-lb;lb;node-eks-additional
+type SecurityGroupRole string
+
+var (
+	// SecurityGroupNode defines a Kubernetes workload node role.
+	SecurityGroupNode = SecurityGroupRole("node")
+
+	// SecurityGroupControlPlane defines a Kubernetes control plane node role.
+	SecurityGroupControlPlane = SecurityGroupRole("controlplane")
+
+	// SecurityGroupAPIServerLB defines a Kubernetes API Server Load Balancer role.
+	SecurityGroupAPIServerLB = SecurityGroupRole("apiserver-lb")
+
+	// SecurityGroupLB defines a container for the cloud provider to inject its load balancer ingress rules.
+	SecurityGroupLB = SecurityGroupRole("lb")
+)
+
+// SecurityGroupRule
+type SecurityGroupRule struct {
+	// ID is the unique identifier of the security group rule.
+	Id string `json:"id"`
+
+	// Description is the description of the security group rule.
+	Description string `json:"description"`
+
+	// SecurityGroupId is the security group id.
+	SecurityGroupId string `json:"security_group_id"`
+
+	// Direction is the direction of the security group rule. Accepted values are "ingress" and "egress".
+	Direction string `json:"direction"`
+
+	// Ethertype is the IP protocol type. The value can be IPv4 or IPv6.
+	Ethertype string `json:"ethertype"`
+
+	// Protocol is the protocol for the security group rule.
+	Protocol string `json:"protocol"`
+
+	// PortRangeMin is the start of port range.
+	PortRangeMin int32 `json:"port_range_min"`
+
+	// PortRangeMax is the end of port range.
+	PortRangeMax int32 `json:"port_range_max"`
+
+	// RemoteIpPrefix is the CIDR block to allow access from.
+	RemoteIpPrefix string `json:"remote_ip_prefix"`
+
+	// RemoteGroupId is the remote security group id.
+	RemoteGroupId string `json:"remote_group_id"`
+
+	// RemoteAddressGroupId is the remote address group id.
+	RemoteAddressGroupId string `json:"remote_address_group_id"`
+}
+
+// SecurityGroup defines an HuaweiCloud security group.
+type SecurityGroup struct {
+	// ID is a unique identifier.
+	ID string `json:"id"`
+
+	// Name is the security group name.
+	Name string `json:"name"`
+
+	// IngressRules is the inbound rules associated with the security group.
+	// +optional
+	SecurityGroupRules []SecurityGroupRule `json:"ingressRule,omitempty"`
+}
+
+// String returns a string representation of the security group.
+func (s *SecurityGroup) String() string {
+	return fmt.Sprintf("id=%s/name=%s", s.ID, s.Name)
+}
+
+// NetworkStatus encapsulates HuaweiCloud networking resources.
+type NetworkStatus struct {
+	// SecurityGroups is a map from the role/kind of the security group to its unique name, if any.
+	SecurityGroups map[SecurityGroupRole]SecurityGroup `json:"securityGroups,omitempty"`
 }

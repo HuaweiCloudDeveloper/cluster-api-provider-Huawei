@@ -15,12 +15,15 @@ func (s *Service) reconcileSubnets() error {
 	}
 
 	// Check if subnet exists, if not create it
-	request := &model.ListSubnetsRequest{}
+	request := &model.ListSubnetsRequest{
+		VpcId: &s.scope.VPC().Id,
+	}
 	response, err := s.vpcClient.ListSubnets(request)
 	if err != nil {
 		return errors.Wrap(err, "failed to list subnets")
 	}
 
+	var subnet *model.Subnet
 	if len(*response.Subnets) == 0 {
 		createRequest := &model.CreateSubnetRequest{}
 		subnetbody := &model.CreateSubnetOption{
@@ -37,22 +40,24 @@ func (s *Service) reconcileSubnets() error {
 			return errors.Wrap(err, "failed to create subnet")
 		}
 
-		s.scope.SetSubnets([]infrav1alpha1.SubnetSpec{
-			{
-				Id:               response.Subnet.Id,
-				Name:             response.Subnet.Name,
-				Cidr:             response.Subnet.Cidr,
-				GatewayIp:        response.Subnet.GatewayIp,
-				VpcId:            response.Subnet.VpcId,
-				NeutronNetworkId: response.Subnet.NeutronNetworkId,
-				NeutronSubnetId:  response.Subnet.NeutronSubnetId,
-			},
-		})
-		klog.Infof("Subnet create response: %v", response)
-		klog.Infof("Created subnet")
+		subnet = response.Subnet
+		klog.Infof("Subnet created, response: %v", response)
 	} else {
+		subnet = &(*response.Subnets)[0]
 		klog.Infof("Subnet already exists")
 	}
+
+	s.scope.SetSubnets([]infrav1alpha1.SubnetSpec{
+		{
+			Id:               subnet.Id,
+			Name:             subnet.Name,
+			Cidr:             subnet.Cidr,
+			GatewayIp:        subnet.GatewayIp,
+			VpcId:            subnet.VpcId,
+			NeutronNetworkId: subnet.NeutronNetworkId,
+			NeutronSubnetId:  subnet.NeutronSubnetId,
+		},
+	})
 
 	// Persist the new default subnets to HCCluster
 	if err := s.scope.PatchObject(); err != nil {

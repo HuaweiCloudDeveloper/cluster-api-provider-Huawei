@@ -12,43 +12,30 @@ import (
 )
 
 func (s *Service) reconcileVPC() error {
-	// Check if VPC exists, if not create it
+	// check if VPC exists, if not create it
 	if s.scope.VPC().Id != "" {
 		klog.Infof("VPC %s already exists", s.scope.VPC().Id)
 		return nil
 	}
 
-	request := &model.ListVpcsRequest{}
-	response, err := s.vpcClient.ListVpcs(request)
+	createRequest := &model.CreateVpcRequest{}
+	cidrVpc := "192.168.0.0/16"
+	nameVpc := "vpc-caph"
+	vpcbody := &model.CreateVpcOption{
+		Cidr: &cidrVpc,
+		Name: &nameVpc,
+	}
+	createRequest.Body = &model.CreateVpcRequestBody{
+		Vpc: vpcbody,
+	}
+
+	createRes, err := s.vpcClient.CreateVpc(createRequest)
 	if err != nil {
-		return errors.Wrap(err, "failed to list VPCs")
+		return errors.Wrap(err, "failed to create VPC")
 	}
-
-	var vpc *model.Vpc
-	if len(*response.Vpcs) == 0 {
-
-		createRequest := &model.CreateVpcRequest{}
-		cidrVpc := "192.168.0.0/16"
-		nameVpc := "vpc-caph"
-		vpcbody := &model.CreateVpcOption{
-			Cidr: &cidrVpc,
-			Name: &nameVpc,
-		}
-		createRequest.Body = &model.CreateVpcRequestBody{
-			Vpc: vpcbody,
-		}
-
-		createRes, err := s.vpcClient.CreateVpc(createRequest)
-		if err != nil {
-			return errors.Wrap(err, "failed to create VPC")
-		}
-		vpc = createRes.Vpc
-		klog.Infof("VPC create response: %v", createRes)
-		klog.Infof("Created VPC %s", vpc.Id)
-	} else {
-		vpc = &(*response.Vpcs)[0]
-		klog.Infof("VPC %s already exists", vpc.Id)
-	}
+	vpc := createRes.Vpc
+	klog.Infof("VPC create response: %v", createRes)
+	klog.Infof("Created VPC %s", vpc.Id)
 
 	s.scope.VPC().Id = vpc.Id
 	s.scope.VPC().Name = vpc.Name

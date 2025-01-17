@@ -178,6 +178,91 @@ spec:
                   - type
                   type: object
                 type: array
+              networkStatus:
+                description: NetworkStatus encapsulates HuaweiCloud networking resources.
+                properties:
+                  securityGroups:
+                    additionalProperties:
+                      description: SecurityGroup defines an HuaweiCloud security group.
+                      properties:
+                        id:
+                          description: ID is a unique identifier.
+                          type: string
+                        ingressRule:
+                          description: IngressRules is the inbound rules associated
+                            with the security group.
+                          items:
+                            description: SecurityGroupRule
+                            properties:
+                              description:
+                                description: Description is the description of the
+                                  security group rule.
+                                type: string
+                              direction:
+                                description: Direction is the direction of the security
+                                  group rule. Accepted values are "ingress" and "egress".
+                                type: string
+                              ethertype:
+                                description: Ethertype is the IP protocol type. The
+                                  value can be IPv4 or IPv6.
+                                type: string
+                              id:
+                                description: ID is the unique identifier of the security
+                                  group rule.
+                                type: string
+                              port_range_max:
+                                description: PortRangeMax is the end of port range.
+                                format: int32
+                                type: integer
+                              port_range_min:
+                                description: PortRangeMin is the start of port range.
+                                format: int32
+                                type: integer
+                              protocol:
+                                description: Protocol is the protocol for the security
+                                  group rule.
+                                type: string
+                              remote_address_group_id:
+                                description: RemoteAddressGroupId is the remote address
+                                  group id.
+                                type: string
+                              remote_group_id:
+                                description: RemoteGroupId is the remote security
+                                  group id.
+                                type: string
+                              remote_ip_prefix:
+                                description: RemoteIpPrefix is the CIDR block to allow
+                                  access from.
+                                type: string
+                              security_group_id:
+                                description: SecurityGroupId is the security group
+                                  id.
+                                type: string
+                            required:
+                            - description
+                            - direction
+                            - ethertype
+                            - id
+                            - port_range_max
+                            - port_range_min
+                            - protocol
+                            - remote_address_group_id
+                            - remote_group_id
+                            - remote_ip_prefix
+                            - security_group_id
+                            type: object
+                          type: array
+                        name:
+                          description: Name is the security group name.
+                          type: string
+                      required:
+                      - id
+                      - name
+                      type: object
+                    description: SecurityGroups is a map from the role/kind of the
+                      security group to its unique name, if any.
+                    type: object
+                type: object
               ready:
                 default: false
                 type: boolean
